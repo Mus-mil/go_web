@@ -11,16 +11,36 @@ type dataHTML struct {
 }
 
 type Client struct {
+	ID       int
 	Name     string
 	Username string
 	Password string
+}
+
+func (c Client) NewUser() {
+	db := initDB()
+	err := editUsersTable(db, c)
+	if err != nil {
+		return
+	}
+	closeDB(db)
+}
+
+func (c Client) GetUserLogin(username string) Client {
+	db := initDB()
+	client, err := getUserFromUsername(db, username)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return client
 }
 
 func ServerRun() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", WelcomeHandle)
-	mux.HandleFunc("/login", LoginHandle)
+	mux.HandleFunc("/signin", SignInHandle)
+	mux.HandleFunc("/signup", SignUpHandle)
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./ui/static/"))))
 
 	log.Println("Starting server on port http://localhost:8080")
@@ -47,10 +67,10 @@ func WelcomeHandle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func LoginHandle(w http.ResponseWriter, r *http.Request) {
+func SignInHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 
-		tmpl, err := template.ParseFiles("./ui/html/login.html")
+		tmpl, err := template.ParseFiles("./ui/html/signin.html")
 		if err != nil {
 			log.Println("nothing or damaged html")
 		}
@@ -63,11 +83,10 @@ func LoginHandle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 
 		client := Client{
-			Name:     r.PostFormValue("name"),
 			Username: r.PostFormValue("username"),
 			Password: r.PostFormValue("password"),
 		}
-
+		clientLogin := Client.GetUserLogin(client.Username)
 		if client.Username == "admin" && client.Password == "admin" {
 			http.SetCookie(w, &http.Cookie{
 				Name:   "authorized",
@@ -75,8 +94,37 @@ func LoginHandle(w http.ResponseWriter, r *http.Request) {
 				Path:   "/",
 				MaxAge: 60,
 			})
-
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		}
+	}
+}
+
+func SignUpHandle(w http.ResponseWriter, r *http.Request) {
+	id := 1
+	if r.Method == http.MethodGet {
+		tmpl, err := template.ParseFiles("./ui/html/signup.html")
+		if err != nil {
+			log.Println("nothing or damaged html")
+		}
+		err = tmpl.Execute(w, nil)
+		if err != nil {
+			return
+		}
+	} else if r.Method == http.MethodPost {
+		client := Client{
+			ID:       id,
+			Name:     r.PostFormValue("name"),
+			Username: r.PostFormValue("username"),
+			Password: r.PostFormValue("password"),
+		}
+		id++
+		client.NewUser()
+		http.SetCookie(w, &http.Cookie{
+			Name:   "authorized",
+			Value:  "true",
+			Path:   "/",
+			MaxAge: 60,
+		})
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 }

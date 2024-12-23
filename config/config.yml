@@ -1,0 +1,9 @@
+port: 8080
+
+db:
+  username: "sumlim"
+  host: "127.0.0.1"
+  port: "5432"
+  password: ""
+  db_name: "db_yalkin"
+  sslmode: "disable"
