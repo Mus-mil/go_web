@@ -8,7 +8,6 @@ import (
 	"log"
 )
 
-// инициализируется база данных
 func InitDB(cfg configs.PostgresConfig) *sql.DB {
 	connectDB := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Pass, cfg.Name, cfg.Sslmode)

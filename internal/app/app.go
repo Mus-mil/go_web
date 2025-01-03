@@ -6,11 +6,21 @@ import (
 	"github.com/go_web/internal/handlers"
 	"github.com/go_web/internal/repository"
 	"github.com/go_web/internal/service"
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 )
 
 func ServerRun() {
+	if err := godotenv.Load("/home/sum-lim/go/src/github.com/go_web/.env"); err != nil {
+		log.Print("No .env file found")
+	}
+
+	if err := initConfigs(); err != nil {
+		log.Print("No .env file found")
+	}
+
 	cfg := configs.NewConfigs()
 
 	db := repository.InitDB(cfg.Postgres)
@@ -32,4 +42,10 @@ func ServerRun() {
 	if err != nil {
 		log.Fatal("server not run")
 	}
+}
+
+func initConfigs() error {
+	viper.AddConfigPath("config")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }
