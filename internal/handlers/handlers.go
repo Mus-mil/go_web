@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"html/template"
-	"log"
+	"github.com/go_web/internal/service"
 	"net/http"
 )
 
@@ -10,121 +9,27 @@ type dataHTML struct {
 	IsAuthorized bool
 }
 
-type Client struct {
-	ID       int
-	Name     string
-	Username string
-	Password string
+type Handler struct {
+	serv *service.Service
 }
 
-func (c Client) NewUser() {
-	db := initDB()
-	err := editUsersTable(db, c)
-	if err != nil {
-		return
-	}
-	closeDB(db)
+func NewHandler(serv *service.Service) *Handler {
+	return &Handler{serv: serv}
 }
 
-func (c Client) GetUserLogin(username string) Client {
-	db := initDB()
-	client, err := getUserFromUsername(db, username)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return client
-}
-
-func ServerRun() {
+func RegisterHandlers(h *Handler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", WelcomeHandle)
-	mux.HandleFunc("/signin", SignInHandle)
-	mux.HandleFunc("/signup", SignUpHandle)
+	mux.HandleFunc("/signin", withH(SignIn, h))
+	mux.HandleFunc("/signup", withH(SignUp, h))
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./ui/static/"))))
 
-	log.Println("Starting server on port http://localhost:8080")
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
-		return
-	}
+	return mux
 }
 
-func WelcomeHandle(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("authorized")
-	isAuthorized := err == nil
-
-	tmpl, err := template.ParseFiles("./ui/html/welcome.html")
-	if err != nil {
-		log.Println("nothing or damaged html")
-	}
-	data := dataHTML{
-		IsAuthorized: isAuthorized,
-	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		return
-	}
-}
-
-func SignInHandle(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-
-		tmpl, err := template.ParseFiles("./ui/html/signin.html")
-		if err != nil {
-			log.Println("nothing or damaged html")
-		}
-
-		err = tmpl.Execute(w, nil)
-		if err != nil {
-			return
-		}
-
-	} else if r.Method == http.MethodPost {
-
-		client := Client{
-			Username: r.PostFormValue("username"),
-			Password: r.PostFormValue("password"),
-		}
-		clientLogin := Client.GetUserLogin(client.Username)
-		if client.Username == "admin" && client.Password == "admin" {
-			http.SetCookie(w, &http.Cookie{
-				Name:   "authorized",
-				Value:  "true",
-				Path:   "/",
-				MaxAge: 60,
-			})
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		}
-	}
-}
-
-func SignUpHandle(w http.ResponseWriter, r *http.Request) {
-	id := 1
-	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("./ui/html/signup.html")
-		if err != nil {
-			log.Println("nothing or damaged html")
-		}
-		err = tmpl.Execute(w, nil)
-		if err != nil {
-			return
-		}
-	} else if r.Method == http.MethodPost {
-		client := Client{
-			ID:       id,
-			Name:     r.PostFormValue("name"),
-			Username: r.PostFormValue("username"),
-			Password: r.PostFormValue("password"),
-		}
-		id++
-		client.NewUser()
-		http.SetCookie(w, &http.Cookie{
-			Name:   "authorized",
-			Value:  "true",
-			Path:   "/",
-			MaxAge: 60,
-		})
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+func withH(handler func(w http.ResponseWriter, r *http.Request, h *Handler), h *Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		handler(w, r, h)
 	}
 }

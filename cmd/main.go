@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/go_web/internal/handlers"
+	"github.com/go_web/internal/app"
 )
 
 func main() {
-	handlers.ServerRun()
+	app.ServerRun()
 }

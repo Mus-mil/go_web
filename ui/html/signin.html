@@ -16,6 +16,10 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
+        {{if .notLoginPass}}
+        <p>Аккаунт не существует</p>
+        {{end}}
+
         <button type="submit">Login</button>
     </form>
 
