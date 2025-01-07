@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/go_web/internal/service"
 	"net/http"
+	"time"
 )
 
 type dataHTML struct {
@@ -17,19 +19,36 @@ func NewHandler(serv *service.Service) *Handler {
 	return &Handler{serv: serv}
 }
 
-func RegisterHandlers(h *Handler) *http.ServeMux {
-	mux := http.NewServeMux()
+func RegisterRoutes(h *Handler) *gin.Engine {
+	router := gin.Default()
 
-	mux.HandleFunc("/", WelcomeHandle)
-	mux.HandleFunc("/signin", withH(SignIn, h))
-	mux.HandleFunc("/signup", withH(SignUp, h))
-	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./ui/static/"))))
+	router.LoadHTMLGlob("ui/html/*")
+	router.StaticFS("/static", http.Dir("ui/static"))
 
-	return mux
+	auth := router.Group("/auth")
+	{
+		auth.GET("/signin", h.SignInGet)
+		auth.POST("/signin", h.SignInPost)
+		auth.GET("/signup", h.SignUpGet)
+		auth.POST("/signup", h.SignUpPost)
+	}
+	router.GET("/id", h.idGet)
+	router.GET("/", h.welcome)
+	return router
 }
 
-func withH(handler func(w http.ResponseWriter, r *http.Request, h *Handler), h *Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		handler(w, r, h)
+type Server struct {
+	httpServer *http.Server
+}
+
+func (s *Server) Run(handler http.Handler) error {
+	s.httpServer = &http.Server{
+		Addr:           ":8080",
+		Handler:        handler,
+		MaxHeaderBytes: 1 << 20, // 1 MB
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 	}
+
+	return s.httpServer.ListenAndServe()
 }

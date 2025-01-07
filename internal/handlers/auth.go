@@ -1,74 +1,52 @@
 package handlers
 
 import (
-	"github.com/go_web/internal/domain"
-	"html/template"
-	"log"
+	"github.com/gin-gonic/gin"
+	"github.com/go_web/internal/models"
 	"net/http"
 )
 
-func SignIn(w http.ResponseWriter, r *http.Request, h *Handler) {
-	if r.Method == http.MethodGet {
-
-		tmpl, err := template.ParseFiles("./ui/html/signin.html")
-		if err != nil {
-			log.Println("nothing or damaged html")
-		}
-
-		err = tmpl.Execute(w, nil)
-		if err != nil {
-			return
-		}
-
-	} else if r.Method == http.MethodPost {
-
-		client := domain.Client{
-			Username: r.PostFormValue("username"),
-			Password: r.PostFormValue("password"),
-		}
-		_, err := h.serv.Login(client.Username, client.Password)
-		if err == nil {
-			http.SetCookie(w, &http.Cookie{
-				Name:   "authorized",
-				Value:  "true",
-				Path:   "/",
-				MaxAge: 60,
-			})
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		} else if err.Error() == "invalid username or password" {
-			http.Redirect(w, r, "/signin", http.StatusTemporaryRedirect)
-		}
-	}
+func (h *Handler) SignInGet(c *gin.Context) {
+	c.HTML(http.StatusOK, "signin.html", gin.H{
+		"error": "",
+	})
 }
 
-func SignUp(w http.ResponseWriter, r *http.Request, h *Handler) {
-	id := 1
-	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("./ui/html/signup.html")
-		if err != nil {
-			log.Println("nothing or damaged html")
-		}
-		err = tmpl.Execute(w, nil)
-		if err != nil {
-			log.Println(err)
-		}
-	} else if r.Method == http.MethodPost {
-		client := domain.Client{
-			ID:       id,
-			Name:     r.PostFormValue("name"),
-			Username: r.PostFormValue("username"),
-			Password: r.PostFormValue("password"),
-		}
-		id++
-		err := h.serv.CreateUser(client)
-		if err != nil {
-			http.SetCookie(w, &http.Cookie{
-				Name:   "authorized",
-				Value:  "true",
-				Path:   "/",
-				MaxAge: 60,
-			})
-		}
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+func (h *Handler) SignInPost(c *gin.Context) {
+	_, err := h.serv.Login(c.PostForm("username"), c.PostForm("password"))
+	if err != nil {
+		c.HTML(http.StatusOK, "signin.html", gin.H{"error": "неправильный пароль или логин"})
+		return
 	}
+	c.Redirect(http.StatusMovedPermanently, "/id")
+}
+
+func (h *Handler) SignUpGet(c *gin.Context) {
+	c.HTML(http.StatusOK, "signup.html", gin.H{})
+}
+
+func (h *Handler) SignUpPost(c *gin.Context) {
+	client := models.Client{
+		Name:     c.PostForm("name"),
+		Username: c.PostForm("username"),
+		Password: c.PostForm("password"),
+	}
+	err := h.serv.CreateUser(client)
+	if err != nil {
+		c.HTML(http.StatusOK, "signup.html", gin.H{"error": err.Error()})
+		return
+	}
+	c.Redirect(http.StatusMovedPermanently, "/id")
+}
+
+func (h *Handler) idGet(c *gin.Context) {
+	c.HTML(http.StatusOK, "welcome.html", gin.H{
+		"IsAuthorized": true,
+	})
+}
+
+func (h *Handler) welcome(c *gin.Context) {
+	c.HTML(http.StatusOK, "welcome.html", gin.H{
+		"IsAuthorized": false,
+	})
 }

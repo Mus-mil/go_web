@@ -1,13 +1,13 @@
 package service
 
 import (
-	"github.com/go_web/internal/domain"
+	"github.com/go_web/internal/models"
 	"github.com/go_web/internal/repository"
 )
 
 type Authorization interface {
-	CreateUser(c domain.Client) error
-	Login(username string, password string) (domain.Client, error)
+	CreateUser(c models.Client) error
+	Login(username string, password string) (models.Client, error)
 }
 
 type Service struct {

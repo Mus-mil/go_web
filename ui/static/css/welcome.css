@@ -1,0 +1,107 @@
+/* static/css/styles.css */
+
+/* Общие стили */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #80deea);
+    margin: 0;
+    padding: 0;
+    color: #444;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Заголовки */
+h1 {
+    font-size: 2.5em;
+    color: #00796b;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Текст */
+p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin: 15px 0;
+}
+
+/* Ссылки */
+a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #00796b;
+    color: #ffffff;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    background-color: #004d40;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Круглое изображение */
+.top-right-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 20px auto;
+    display: block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.top-right-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Мелкие улучшения */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    p {
+        font-size: 1em;
+    }
+
+    a {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .top-right-icon {
+        width: 100px;
+        height: 100px;
+    }
+}

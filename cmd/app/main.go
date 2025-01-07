@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"database/sql"
@@ -9,10 +9,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"log"
-	"net/http"
 )
 
-func ServerRun() {
+func main() {
 	if err := godotenv.Load("/home/sum-lim/go/src/github.com/go_web/.env"); err != nil {
 		log.Print("No .env file found")
 	}
@@ -35,13 +34,11 @@ func ServerRun() {
 	serv := service.NewService(repo)
 	handler := handlers.NewHandler(serv)
 
-	mux := handlers.RegisterHandlers(handler)
-
-	log.Print("server run in http://localhost:8080")
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
-		log.Fatal("server not run")
+	srv := new(handlers.Server)
+	if err := srv.Run(handlers.RegisterRoutes(handler)); err != nil {
+		log.Fatal("server not running")
 	}
+	log.Print("server run in http://localhost:8080")
 }
 
 func initConfigs() error {

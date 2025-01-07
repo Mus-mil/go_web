@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <h1>Регистрация</h1>
-    <form action="/signup" method="POST"> <!-- Укажите правильный маршрут для обработки формы -->
+    <form action="/auth/signup" method="POST"> <!-- Укажите правильный маршрут для обработки формы -->
         <label for="name">Имя:</label>
         <input type="text" id="name" name="name" required>
 
@@ -19,10 +19,12 @@
         <label for="password">Пароль:</label>
         <input type="password" id="password" name="password" required>
 
+        <p style="color: red;">{{ .error }}</p>
+
         <button type="submit">Зарегистрироваться</button>
     </form>
 
-    <p>Уже есть аккаунт? <a href="/signin">Войти</a></p> <!-- Ссылка на маршрут входа -->
+    <p>Уже есть аккаунт? <a href="/auth/signin">Войти</a></p> <!-- Ссылка на маршрут входа -->
 </div>
 </body>
 </html>

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"github.com/go_web/internal/domain"
+	"github.com/go_web/internal/models"
 )
 
 type AuthPostgres struct {
@@ -13,7 +13,7 @@ func NewAuthPostgres(db *sql.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
-func (repo *AuthPostgres) CreateUser(client domain.Client) error {
+func (repo *AuthPostgres) CreateUser(client models.Client) error {
 	_, err := repo.db.Exec("INSERT INTO users (name, username, password) VALUES ($1, $2, $3)",
 		client.Name, client.Username, client.Password)
 	if err != nil {
@@ -22,12 +22,12 @@ func (repo *AuthPostgres) CreateUser(client domain.Client) error {
 	return nil
 }
 
-func (repo *AuthPostgres) GetUser(username string, password string) (domain.Client, error) {
-	var client domain.Client
+func (repo *AuthPostgres) GetUser(username string, password string) (models.Client, error) {
+	var client models.Client
 	row := repo.db.QueryRow("SELECT id, name, username, password FROM users WHERE username = $1 AND password = $2", username, password)
 	err := row.Scan(&client.ID, &client.Name, &client.Username, &client.Password)
 	if err != nil {
-		return domain.Client{}, err
+		return models.Client{}, err
 	}
 	return client, nil
 }

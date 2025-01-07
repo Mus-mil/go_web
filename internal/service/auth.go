@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"github.com/go_web/internal/domain"
+	"github.com/go_web/internal/models"
 	"github.com/go_web/internal/repository"
 )
 
@@ -14,11 +14,11 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (r *AuthService) CreateUser(client domain.Client) error {
+func (r *AuthService) CreateUser(client models.Client) error {
 	return r.repo.CreateUser(client)
 }
 
-func (r *AuthService) Login(username string, password string) (domain.Client, error) {
+func (r *AuthService) Login(username string, password string) (models.Client, error) {
 	client, err := r.repo.GetUser(username, password)
 	if client.Username == "" || client.Password == "" {
 		err = errors.New("invalid username or password")

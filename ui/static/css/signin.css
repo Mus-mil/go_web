@@ -1,16 +1,16 @@
-/* static/css/signup.css */
+/* static/css/login.css */
 
 /* Общие стили */
 body {
     font-family: 'Roboto', Arial, sans-serif;
-    background: linear-gradient(135deg, #ff6f61, #ffab91);
+    background: linear-gradient(135deg, #2196f3, #21cbf3);
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    color: #444;
+    color: #333;
 }
 
 .container {
@@ -25,10 +25,10 @@ body {
 }
 
 /* Заголовок */
-h1 {
+h2 {
     margin-bottom: 20px;
-    font-size: 2em;
-    color: #d84315;
+    font-size: 1.8em;
+    color: #007BFF;
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -44,7 +44,7 @@ label {
     text-align: left;
     display: block;
     margin-bottom: 5px;
-    color: #444;
+    color: #333;
 }
 
 input[type="text"],
@@ -55,20 +55,25 @@ input[type="password"] {
     border-radius: 8px;
     background: #f9f9f9;
     font-size: 1em;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
-    border-color: #d84315;
+    border-color: #007BFF;
     outline: none;
     background: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ошибка */
+p[style="color: red;"] {
+    font-size: 0.9em;
+    margin: 0;
 }
 
 /* Кнопка */
 button[type="submit"] {
-    background-color: #d84315;
+    background-color: #007BFF;
     color: #ffffff;
     border: none;
     padding: 12px;
@@ -80,7 +85,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #bf360c;
+    background-color: #0056b3;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
@@ -92,14 +97,14 @@ button[type="submit"]:active {
 
 /* Ссылки */
 a {
-    color: #d84315;
+    color: #007BFF;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
 }
 
 a:hover {
-    color: #bf360c;
+    color: #0056b3;
     text-decoration: underline;
 }
 
@@ -121,7 +126,7 @@ a:hover {
         padding: 20px 30px;
     }
 
-    h1 {
+    h2 {
         font-size: 1.5em;
     }
 

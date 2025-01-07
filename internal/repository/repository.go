@@ -2,12 +2,12 @@ package repository
 
 import (
 	"database/sql"
-	"github.com/go_web/internal/domain"
+	"github.com/go_web/internal/models"
 )
 
 type Authorization interface {
-	CreateUser(client domain.Client) error
-	GetUser(username string, password string) (domain.Client, error)
+	CreateUser(client models.Client) error
+	GetUser(username string, password string) (models.Client, error)
 }
 
 type Repository struct {

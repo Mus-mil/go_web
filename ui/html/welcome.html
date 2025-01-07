@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/welcome.css">
 </head>
 <body>
 <div class="container">
@@ -13,10 +13,10 @@
     {{if .IsAuthorized}}
     <p>Вы успешно вошли в систему.</p>
     <img src="/static/images/images_login.png" alt="" class="top-right-icon">
-    <p><a href="/signin">Войти заново</a></p>
+    <p><a href="/auth/signin">Войти заново</a></p>
     {{else}}
     <p>Пожалуйста, войдите в систему.</p>
-    <p><a href="/signin">Войти</a></p>
+    <p><a href="/auth/signin">Войти</a></p>
     {{end}}
 </div>
 </body>
