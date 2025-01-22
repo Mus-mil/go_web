@@ -13,7 +13,7 @@ func (h *Handler) SignInGet(c *gin.Context) {
 }
 
 func (h *Handler) SignInPost(c *gin.Context) {
-	_, err := h.serv.Login(c.PostForm("username"), c.PostForm("password"))
+	_, err := h.serv.LoginUser(c.PostForm("username"), c.PostForm("password"))
 	if err != nil {
 		c.HTML(http.StatusOK, "signin.html", gin.H{"error": "неправильный пароль или логин"})
 		return
@@ -26,7 +26,7 @@ func (h *Handler) SignUpGet(c *gin.Context) {
 }
 
 func (h *Handler) SignUpPost(c *gin.Context) {
-	client := models.Client{
+	client := models.User{
 		Name:     c.PostForm("name"),
 		Username: c.PostForm("username"),
 		Password: c.PostForm("password"),
