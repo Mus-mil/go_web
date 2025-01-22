@@ -22,8 +22,8 @@ func NewHandler(serv *service.Service) *Handler {
 func RegisterRoutes(h *Handler) *gin.Engine {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("ui/html/*")
-	router.StaticFS("/static", http.Dir("ui/static"))
+	router.LoadHTMLGlob("web/html/*")
+	router.StaticFS("/static", http.Dir("web/static"))
 
 	auth := router.Group("/auth")
 	{

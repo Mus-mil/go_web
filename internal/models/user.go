@@ -1,6 +1,6 @@
 package models
 
-type Client struct {
+type User struct {
 	ID       int
 	Name     string
 	Username string

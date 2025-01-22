@@ -3,12 +3,14 @@ package main
 import (
 	"database/sql"
 	"github.com/go_web/internal/configs"
-	"github.com/go_web/internal/handlers"
+	"github.com/go_web/internal/delivery/http/handlers"
 	"github.com/go_web/internal/repository"
 	"github.com/go_web/internal/service"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"log"
+	"net/http"
+	"time"
 )
 
 func main() {
@@ -34,11 +36,15 @@ func main() {
 	serv := service.NewService(repo)
 	handler := handlers.NewHandler(serv)
 
-	srv := new(handlers.Server)
-	if err := srv.Run(handlers.RegisterRoutes(handler)); err != nil {
-		log.Fatal("server not running")
+	srv := http.Server{
+		Addr:           ":8080",
+		Handler:        handlers.RegisterRoutes(handler),
+		MaxHeaderBytes: 1 << 20,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 	}
-	log.Print("server run in http://localhost:8080")
+
+	log.Fatal(srv.ListenAndServe())
 }
 
 func initConfigs() error {

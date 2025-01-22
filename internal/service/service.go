@@ -6,8 +6,8 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(c models.Client) error
-	Login(username string, password string) (models.Client, error)
+	CreateUser(c models.User) error
+	Login(username string, password string) (models.User, error)
 }
 
 type Service struct {
