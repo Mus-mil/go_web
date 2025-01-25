@@ -14,7 +14,7 @@ func NewAuthPostgres(db *sql.DB) *AuthPostgres {
 }
 
 func (repo *AuthPostgres) CreateUser(client models.User) error {
-	_, err := repo.db.Exec("INSERT INTO users (name, username, password) VALUES ($1, $2, $3)",
+	_, err := repo.db.Exec("INSERT INTO users (name, username, password_hash) VALUES ($1, $2, $3)",
 		client.Name, client.Username, client.Password)
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func (repo *AuthPostgres) CreateUser(client models.User) error {
 
 func (repo *AuthPostgres) GetUser(username string, password string) (models.User, error) {
 	var client models.User
-	row := repo.db.QueryRow("SELECT id, name, username, password FROM users WHERE username = $1 AND password = $2", username, password)
+	row := repo.db.QueryRow("SELECT id, name, username, password_hash FROM users WHERE username = $1 AND password_hash = $2", username, password)
 	err := row.Scan(&client.ID, &client.Name, &client.Username, &client.Password)
 	if err != nil {
 		return models.User{}, err

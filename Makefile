@@ -1,12 +1,12 @@
 
 all: clear build
-	./yoldiz
+	./tugan
 
 run:
 	go run cmd/app/main.go
 
 build:
-	go build -o yoldiz cmd/app/main.go
+	go build -o tugan cmd/app/main.go
 
 clear:
-	rm -rf yoldiz
+	rm -rf tugan
